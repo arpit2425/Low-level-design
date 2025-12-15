@@ -67,6 +67,12 @@ func execute2(){
 func main(){
 	ctx,cancel:=context.WithCancel(context.TODO())
 	cr:=newCronJob(ctx,cancel)
+	defer func(){
+		cr.Cancel()
+		if r:=recover();r!=nil{
+			fmt.Println("recovered")
+		}
+	}()
 	go cr.Start()
 	t1:=time.NewTicker(1 *time.Second)
 	t2:=time.NewTicker(2 *time.Second)
@@ -82,7 +88,10 @@ func main(){
 	cr.Submit(*job1)
 	cr.Submit(*job2)
 	// cr.Cancel()
+    // time.Sleep(10* time.Second)
+    // cr.Cancel()
+
     cr.wg.Wait()
-	cr.Cancel()
+	
 
 }
